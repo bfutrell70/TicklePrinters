@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TicklePrinters
 {
@@ -23,7 +24,7 @@ namespace TicklePrinters
 
             // loop through IP addresses in appsettings.json file
             //var addresses = configuration.GetSection("printerIPAddresses").Get<List<string>>();
-            var addresses = configuration.GetSection("printerIPAddresses").Get<List<string>>();
+            var addresses = configuration.GetSection("printerIPAddresses").GetChildren().ToArray().Select(c => c.Value).ToArray();
             foreach (var addr in addresses)
             {
                 MainAsync(addr).ConfigureAwait(false).GetAwaiter().GetResult();    
@@ -39,7 +40,7 @@ namespace TicklePrinters
             HttpClient client = new HttpClient();
             var response = await client.GetAsync($"http://{address}/");
             var pageContents = await response.Content.ReadAsStringAsync();
-            //Console.WriteLine(pageContents);
+            Console.WriteLine(pageContents);
             //Console.ReadLine();
         }
     }
